@@ -25,6 +25,8 @@ class MenuItem(Base):
     food_name = Column(String())
     food_price = Column(Integer())
 
+    restaurants = relationship('Restaurant', secondary=restraunt_menus, back_populates='menu_items')
+
 class Restaurant(Base):
     __tablename__ = 'restaurants'
     __table_args__ = (PrimaryKeyConstraint('id'),)
@@ -32,3 +34,5 @@ class Restaurant(Base):
     id = Column(Integer())
     name = Column(String())
     rating = Column(Integer())
+
+    menu_items = relationship('MenuItem', secondary=restraunt_menus, back_populates='restaurants')
