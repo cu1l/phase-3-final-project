@@ -36,3 +36,9 @@ class Restaurant(Base):
     rating = Column(Integer())
 
     menu_items = relationship('MenuItem', secondary=restraunt_menus, back_populates='restaurants')
+
+class UserOrder(Base):
+    __tablename__ = 'user_orders'
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, nullable=False)
+    menu_item_id = Column(Integer, nullable=False)
