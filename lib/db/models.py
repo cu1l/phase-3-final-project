@@ -33,7 +33,7 @@ class Restaurant(Base):
 
     id = Column(Integer())
     name = Column(String())
-    rating = Column(Integer())
+    cuisine = Column(Integer())
 
     menu_items = relationship('MenuItem', secondary=restraunt_menus, back_populates='restaurants')
 
