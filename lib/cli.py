@@ -2,8 +2,6 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from rich.console import Console
-from rich.table import Table
-from rich import box
 
 from db.models import Restaurant, MenuItem, restaurant_menu
 from helpers import (create_restaurants, create_menu_items, YES, NO)
@@ -14,9 +12,9 @@ engine = create_engine('sqlite:///db/restaurants.db')
 session = sessionmaker(bind=engine)()
 
 if __name__ == '__main__':
-    console.print('''[cyan]
-  ___   _  _   _____  _            ___  ___
- / _ \ | || | |_   _|| |           |  \/  |                         
+    console.print(f'''[cyan]
+  ___   _  _   _____  _            ___  ___                                                         
+ / _ \ | || | |_   _|| |           |  \/  |
 / /_\ \| || |   | |  | |__    ___  | .  . |  ___  _ __   _   _  ___ 
 |  _  || || |   | |  | '_ \  / _ \ | |\/| | / _ \| '_ \ | | | |/ __|
 | | | || || |   | |  | | | ||  __/ | |  | ||  __/| | | || |_| |\__ \    
@@ -43,12 +41,12 @@ Yb:!!:::::8!!::::::::::::8
  8b:!!!:!!8!!!:!:::::!!:dP
   `8b:!!!:Yb!!!!:::::!d88
       """  Y88!!!!!!!d8P                   
-    ''', justify="default")
+    ''', justify="full")
 
     console.print("[bold turquoise4] Heres a list of restaurants to order from: ")
 
     cart = []
-    rest_input = "Please enter which restaurant you'd like to order from: "
+    rest_input = "Please enter the restaurant's ID: "
 
     while True:
       restaurants = session.query(Restaurant)
@@ -64,7 +62,9 @@ Yb:!!:::::8!!::::::::::::8
 
       food = None
       while not food:
-        menu_id = console.input("[bold royal_blue1] > [cyan]Please enter the ID of the food you'd like: ")
+        menu_id = console.input("[bold royal_blue1] > [cyan]Please enter the food's ID: ")
+        if menu_id == 0:
+          break
         food = session.query(MenuItem).filter(MenuItem.id == menu_id).one_or_none()
       
       console.print(f'[bold royal_blue1] [turquoise4]You chose {food.food_name}!')
@@ -73,7 +73,7 @@ Yb:!!:::::8!!::::::::::::8
       more = console.input(f'[bold royal_blue1] > [cyan]Would you like to order more food? (Y/N): ').lower()
 
       if more in YES:
-        rest_input = "Please select another restaurant: "
+        rest_input = "Please select another restaurant's ID: "
 
       if more in NO:
         console.input(f'[bold royal_blue1] > [cyan]Please input the address for your order: ')
@@ -82,5 +82,9 @@ Yb:!!:::::8!!::::::::::::8
         total = subtotal + tax
 
         console.print(f'[bold turquoise4]Your total today is [red]{total:.2f}!')
-        console.print(f'[bold turquoise4]Thank you for using all the menus!')
-        break
+        answer = console.input(f'[bold royal_blue1] > [cyan]Would you like to place a new order? (Y/N): ')
+        if answer in YES:
+          cart.pop()
+        if answer in NO:
+          console.print(f'[bold turquoise4]Thank you for using all the menus!')
+          break
