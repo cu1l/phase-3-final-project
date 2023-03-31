@@ -11,6 +11,14 @@ engine = create_engine('sqlite:///restaurants.db')
 Session = sessionmaker(bind=engine)
 session = Session()
 
+console.print(f"[bold blue] | Purging databases...")
+
+session.query(Restaurant).delete()
+session.query(MenuItem).delete()
+session.commit()
+
+console.print(f"[bold green] | Purged Databases.")
+
 console.print(f"[bold blue] | Building databases...")
 console.print(f"[bold blue] | Creating Restaurants...")
 

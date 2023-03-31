@@ -8,7 +8,7 @@ from helpers import (create_restaurants, YES, NO)
 
 console = Console(width=80)
 
-engine = create_engine('sqlite:///restaurants.db')
+engine = create_engine('sqlite:///db/restaurants.db')
 session = sessionmaker(bind=engine)()
 
 if __name__ == '__main__':
