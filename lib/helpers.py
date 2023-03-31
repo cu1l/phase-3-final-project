@@ -1,6 +1,9 @@
-from db.models import Base, restraunt_menus, MenuItem, Restaurant, UserOrder
+from db.models import Base, restaurant_menu, MenuItem, Restaurant, UserOrder
 from alembic.config import Config
 from alembic import command
+from rich.console import Console
+
+console = Console()
 
 YES = ['y', 'ye', 'yes']
 NO = ['n', 'no']
@@ -14,10 +17,13 @@ def drop_tables(engine):
 def migrate_database(config):
     command.upgrade(config, "head")
 
-def get_restaurants(session):
-    restaurants = session.query(Restaurant).all()
-    for r in restaurants:
-        print(f"{r.id}. {r.name}")
+def create_restaurants(restaurants):
+    for restaurant in restaurants:
+        idspace = 3 - len(str(restaurant.id))
+        namespace = 43 - len(restaurant.name)
+        console.print(f'{restaurant.id}{restaurant.name}')
+
+    console.print('[yellow] ')
 
 def get_menu_items(session, restaurant_id):
     menu_items = session.query(MenuItem).filter_by(restaurant_id=restaurant_id).all()

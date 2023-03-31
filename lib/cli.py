@@ -3,6 +3,9 @@ from sqlalchemy.orm import sessionmaker
 
 from rich.console import Console
 
+from db.models import Restaurant, MenuItem, restaurant_menu
+from helpers import (create_restaurants, YES, NO)
+
 console = Console(width=80)
 
 engine = create_engine('sqlite:///restaurants.db')
@@ -40,6 +43,14 @@ Yb:!!:::::8!!::::::::::::8
  VK   """  Y88!!!!!!!d8P                   
     ''', justify="default")
 
-    console.print("[bold magenta]Heres a list of restaurants to order from: ")
+    console.print("[bold magenta] | Heres a list of restaurants to order from: ")
 
-    user_input = console.input("[bold yellow]Please enter which restaurant you'd like to order from: ")
+    cart = []
+
+    while True:
+      restaurants = session.query(Restaurant)
+      create_restaurants(restaurants)
+      restaurant = None
+      while not restaurant:
+        restaurant_id = console.input("[bold yellow] | Please enter which restaurant you'd like to order from: ")
+        restaurant = session.query(Restaurant).filter(Restaurant.id == restaurant_id).one_or_none()

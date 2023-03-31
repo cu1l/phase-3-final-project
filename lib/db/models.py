@@ -10,8 +10,8 @@ engine = create_engine('sqlite:///restaurants.db')
 
 Base = declarative_base()
 
-restraunt_menus = Table(
-    'restaurants_menus',
+restaurant_menu = Table(
+    'restaurant_menus',
     Base.metadata,
     Column('menu_id', ForeignKey('menu_items.id'), primary_key=True),
     Column('restaurant_id', ForeignKey('restaurants.id'), primary_key=True)
@@ -24,8 +24,9 @@ class MenuItem(Base):
     id = Column(Integer())
     food_name = Column(String())
     food_price = Column(Integer())
+    restaurant = Column(String())
 
-    restaurants = relationship('Restaurant', secondary=restraunt_menus, back_populates='menu_items')
+    restaurants = relationship('Restaurant', secondary=restaurant_menu, back_populates='menu_items')
 
 class Restaurant(Base):
     __tablename__ = 'restaurants'
@@ -33,9 +34,14 @@ class Restaurant(Base):
 
     id = Column(Integer())
     name = Column(String())
-    cuisine = Column(Integer())
+    cuisine = Column(String())
 
-    menu_items = relationship('MenuItem', secondary=restraunt_menus, back_populates='restaurants')
+    menu_items = relationship('MenuItem', secondary=restaurant_menu, back_populates='restaurants')
+
+    def __repr__(self):
+        return f'Restaurant(id={self.id}), ' + \
+            f'name={self.name}' + \
+            f'cuisine={self.cuisine}'
 
 class UserOrder(Base):
     __tablename__ = 'user_orders'
