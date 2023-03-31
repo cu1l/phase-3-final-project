@@ -5,56 +5,20 @@ from rich.console import Console
 
 console = Console()
 
-YES = ['y', 'ye', 'yes']
-NO = ['n', 'no']
-
-def create_tables(engine):
-    Base.metadata.create_all(engine)
-
-def drop_tables(engine):
-    Base.metadata.drop_all(engine)
-
-def migrate_database(config):
-    command.upgrade(config, "head")
+YES = ['y', 'yes', 'Y']
+NO = ['n', 'no', 'N']
 
 def create_restaurants(restaurants):
+    console.print(f'[bold royal_blue1] | [light_salmon1]ID[royal_blue1]| [light_salmon1]Name{" " * 12}[royal_blue1]| ')
     for restaurant in restaurants:
-        idspace = 3 - len(str(restaurant.id))
-        namespace = 43 - len(restaurant.name)
-        console.print(f'{restaurant.id}{restaurant.name}')
+        idspace = 2 - len(str(restaurant.id))
+        namespace = 16 - len(restaurant.name)
+        console.print(f' [bold royal_blue1]|[light_salmon1] {restaurant.id}{" " * idspace}[royal_blue1]| [light_salmon1]{restaurant.name}{" " * namespace}[royal_blue1]|')
 
-    console.print('[yellow] ')
-
-def get_menu_items(session, restaurant_id):
-    menu_items = session.query(MenuItem).filter_by(restaurant_id=restaurant_id).all()
-    for mi in menu_items:
-        print(f"{mi.id}. {mi.name}: ${mi.price}")
-
-def add_menu_item_to_order(session, user_id, menu_item_id):
-    order = UserOrder(user_id=user_id, menu_item_id=menu_item_id)
-    session.add(order)
-    session.commit()
-
-def delete_menu_item_from_order(session, user_id, menu_item_id):
-    order = session.query(UserOrder).filter_by(user_id=user_id, menu_item_id=menu_item_id).first()
-    session.delete(order)
-    session.commit()
-
-def get_user_order(session, user_id):
-    order = session.query(UserOrder).filter_by(user_id=user_id).all()
-    total_price = 0
-    for o in order:
-        mi = session.query(MenuItem).filter_by(id=o.menu_item_id).first()
-        print(f"{mi.name}: ${mi.price}")
-        total_price += mi.price
-    print(f"Total price: ${total_price}")
-
-def pay_tab(session, user_id):
-    order = session.query(UserOrder).filter_by(user_id=user_id).all()
-    total_price = 0
-    for o in order:
-        mi = session.query(MenuItem).filter_by(id=o.menu_item_id).first()
-        total_price += mi.price
-    print(f"Your tab is: ${total_price}")
-    session.query(UserOrder).filter_by(user_id=user_id).delete()
-    session.commit()
+def create_menu_items(menu_items):
+    console.print(f'[bold royal_blue1] | [light_salmon1]ID[royal_blue1]| [light_salmon1]Name{" " * 19}[royal_blue1]| [light_salmon1]Price  [royal_blue1]| ')
+    for menu_item in menu_items:
+        foodidspace = 2 - len(str(menu_item.id))
+        foodnamespace = 23 - len(menu_item.food_name)
+        pricespace = 6 - len(str(menu_item.food_price))
+        console.print(f'[bold royal_blue1] |[light_salmon1] {menu_item.id}{" " * foodidspace}[royal_blue1]| [light_salmon1]{menu_item.food_name}{" " * foodnamespace}[royal_blue1]|[light_salmon1] ${menu_item.food_price:.2f}{" " * pricespace}[royal_blue1]|')

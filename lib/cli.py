@@ -4,7 +4,7 @@ from sqlalchemy.orm import sessionmaker
 from rich.console import Console
 
 from db.models import Restaurant, MenuItem, restaurant_menu
-from helpers import (create_restaurants, YES, NO)
+from helpers import (create_restaurants, create_menu_items, YES, NO)
 
 console = Console(width=80)
 
@@ -12,7 +12,7 @@ engine = create_engine('sqlite:///db/restaurants.db')
 session = sessionmaker(bind=engine)()
 
 if __name__ == '__main__':
-    console.print('''[dark_red]
+    console.print('''[cyan]
   ___   _  _   _____  _            ___  ___
  / _ \ | || | |_   _|| |           |  \/  |                         
 / /_\ \| || |   | |  | |__    ___  | .  . |  ___  _ __   _   _  ___ 
@@ -20,7 +20,7 @@ if __name__ == '__main__':
 | | | || || |   | |  | | | ||  __/ | |  | ||  __/| | | || |_| |\__ \    
 \_| |_/|_||_|   \_/  |_| |_| \___| \_|  |_/ \___||_| |_| \__,_||___/
 
-
+[dark_red]
                     d888P
       d8b d8888P:::P
     d:::888b::::::P
@@ -40,17 +40,44 @@ if __name__ == '__main__':
 Yb:!!:::::8!!::::::::::::8
  8b:!!!:!!8!!!:!:::::!!:dP
   `8b:!!!:Yb!!!!:::::!d88
- VK   """  Y88!!!!!!!d8P                   
+      """  Y88!!!!!!!d8P                   
     ''', justify="default")
 
-    console.print("[bold magenta] | Heres a list of restaurants to order from: ")
+    console.print("[bold turquoise4] Heres a list of restaurants to order from: ")
 
     cart = []
+    rest_input = "Please enter which restaurant you'd like to order from: "
 
     while True:
       restaurants = session.query(Restaurant)
       create_restaurants(restaurants)
       restaurant = None
       while not restaurant:
-        restaurant_id = console.input("[bold yellow] | Please enter which restaurant you'd like to order from: ")
+        restaurant_id = console.input(f"[bold royal_blue1] > [cyan]{rest_input}")
         restaurant = session.query(Restaurant).filter(Restaurant.id == restaurant_id).one_or_none()
+
+      console.print(f'[bold royal_blue1] [turquoise4]Here is the menu at {restaurant.name}: ')
+      foods = session.query(MenuItem).filter_by(restaurant=restaurant_id).all()
+      create_menu_items(foods)
+
+      food = None
+      while not food:
+        menu_id = console.input("[bold royal_blue1] > [cyan]Please enter the ID of the food you'd like: ")
+        food = session.query(MenuItem).filter(MenuItem.id == menu_id).one_or_none()
+      
+      console.print(f'[bold royal_blue1] [turquoise4]You chose {food.food_name}!')
+      cart.append(food)
+
+      more = console.input(f'[bold royal_blue1] > [cyan]Would you like to order more food? (Y/N): ').lower()
+
+      if more in YES:
+        rest_input = "Please select another restaurant: "
+
+      if more in NO:
+        subtotal = sum(food.food_price for food in cart)
+        tax = subtotal * 0.065
+        total = subtotal + tax
+
+        console.print(f'[bold royal_blue1] [turquoise4]Your total today is [red]{total:.2f}!')
+        console.print(f'[bold royal_blue1] [turquoise4]Thank you for using all the menus!')
+        break

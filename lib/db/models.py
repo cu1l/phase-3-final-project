@@ -24,9 +24,16 @@ class MenuItem(Base):
     id = Column(Integer())
     food_name = Column(String())
     food_price = Column(Integer())
-    restaurant = Column(String())
+    restaurant = Column(Integer(), ForeignKey('restaurants.id'))
 
     restaurants = relationship('Restaurant', secondary=restaurant_menu, back_populates='menu_items')
+
+    def __repr__(self):
+        return f'MenuItem(id={self.id}, ' + \
+            f'food_name={self.food_name}, ' + \
+            f'unit_price={self.food_price})' + \
+            f'restaurant={self.restaurant})'
+            
 
 class Restaurant(Base):
     __tablename__ = 'restaurants'
