@@ -76,10 +76,11 @@ Yb:!!:::::8!!::::::::::::8
         rest_input = "Please select another restaurant: "
 
       if more in NO:
+        console.input(f'[bold royal_blue1] > [cyan]Please input the address for your order: ')
         subtotal = sum(food.food_price for food in cart)
         tax = subtotal * 0.065
         total = subtotal + tax
 
-        console.print(f'[bold royal_blue1] [turquoise4]Your total today is [red]{total:.2f}!')
-        console.print(f'[bold royal_blue1] [turquoise4]Thank you for using all the menus!')
+        console.print(f'[bold turquoise4]Your total today is [red]{total:.2f}!')
+        console.print(f'[bold turquoise4]Thank you for using all the menus!')
         break
