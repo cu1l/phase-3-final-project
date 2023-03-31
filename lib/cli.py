@@ -2,6 +2,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from rich.console import Console
+from rich.table import Table
+from rich import box
 
 from db.models import Restaurant, MenuItem, restaurant_menu
 from helpers import (create_restaurants, create_menu_items, YES, NO)
